@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ru.protei.galimullindg.domain.Note
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,89 +56,98 @@ fun NotesScreen(vm: NotesViewModel) {
         }
     ) {
         if (vm.selected.value == null) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .padding(it)
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
-                itemsIndexed(vm.notes) { index, note ->
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .clickable { vm.onNoteSelected(note) },
-                        elevation = CardDefaults.cardElevation(6.dp)
-                    ) {
-                        Text(
-                            text = note.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .padding(6.dp, 6.dp, 6.dp)
-                        )
-                        Text(
-                            text = note.text,
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .padding(6.dp)
-                        )
-
-                    }
-                }
-            }
+            Notes(it,vm.notes,vm::onNoteSelected)
         } else {
-            Column(
-                modifier = Modifier.padding(it)
+            NoteEdit(vm.selected.value!!, vm::onNoteChange)
+        }
+    }
+}
+
+@Composable
+fun Notes(padding:PaddingValues,notes:List<Note>,onNoteSelected:(Note)->Unit) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier
+            .padding(padding)
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        itemsIndexed(notes) { index, note ->
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clickable { onNoteSelected(note) },
+                elevation = CardDefaults.cardElevation(6.dp)
             ) {
-                var title by remember { mutableStateOf(vm.selected.value!!.title) }
-                TextField(
-                    value = title,
-                    onValueChange = {
-                        title = it
-                        vm.onNoteChange(it, vm.selected.value!!.text)
-                    },
-                    textStyle = MaterialTheme.typography.titleMedium,
+                Text(
+                    text = note.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    placeholder = {
-                        Text(
-                            text = "Заголовок"
-                        )
-                    }
+                        .padding(6.dp, 6.dp, 6.dp)
+                )
+                Text(
+                    text = note.text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .padding(6.dp)
                 )
 
-                var text by remember { mutableStateOf(vm.selected.value!!.text) }
-                BasicTextField(
-                    value = text,
-                    onValueChange = {
-                        text = it
-                        vm.onNoteChange(vm.selected.value!!.title, it)
-                    },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    cursorBrush = Brush.horizontalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.primary
-                        )
-                    ),
-                    decorationBox = { innerTetxField ->
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            innerTetxField()
-                        }
-                    }
-                )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NoteEdit(note: Note, onNoteChange: (String, String) -> Unit) {
+    Column {
+        var title by remember { mutableStateOf(note.title) }
+        TextField(
+            value = title,
+            onValueChange = {
+                title = it
+                onNoteChange(it, note.text)
+            },
+            textStyle = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            placeholder = {
+                Text(
+                    text = "Заголовок"
+                )
+            }
+        )
+
+        var text by remember { mutableStateOf(note.text) }
+        BasicTextField(
+            value = text,
+            onValueChange = {
+                text = it
+                onNoteChange(note.title, it)
+            },
+            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            cursorBrush = Brush.horizontalGradient(
+                listOf(
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.primary
+                )
+            ),
+            decorationBox = { innerTetxField ->
+                Box(modifier = Modifier.fillMaxSize()) {
+                    innerTetxField()
+                }
+            }
+        )
     }
 }
