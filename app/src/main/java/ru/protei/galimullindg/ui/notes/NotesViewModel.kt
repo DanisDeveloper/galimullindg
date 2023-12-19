@@ -41,7 +41,7 @@ class NotesViewModel(val notesUseCase: NotesUseCase) : ViewModel() {
 
     fun onEditComplete() {
         viewModelScope.launch {
-            notesUseCase.update(selected.value!!)
+            notesUseCase.save(selected.value!!)
         }
         selected.value = null
     }
@@ -52,9 +52,6 @@ class NotesViewModel(val notesUseCase: NotesUseCase) : ViewModel() {
 
     fun onAddNoteClicked() {
         val note = Note(title = "", text = "")
-        viewModelScope.launch {
-            note.id = notesUseCase.add(note)
-        }
         selected.value = note
     }
 }
