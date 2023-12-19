@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import ru.protei.galimullindg.domain.Note
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesScreen(vm: NotesViewModel) {
+    val notes by vm.notes.collectAsState()
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -56,7 +58,7 @@ fun NotesScreen(vm: NotesViewModel) {
         }
     ) {
         if (vm.selected.value == null) {
-            Notes(it,vm.notes,vm::onNoteSelected)
+            Notes(it,notes,vm::onNoteSelected)
         } else {
             NoteEdit(vm.selected.value!!, vm::onNoteChange)
         }
