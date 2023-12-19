@@ -1,5 +1,6 @@
 package ru.protei.galimullindg.ui.notes
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -40,13 +41,17 @@ import ru.protei.galimullindg.domain.Note
 @Composable
 fun NotesScreen(vm: NotesViewModel) {
     val notes by vm.notes.collectAsState()
+    val regex = Regex("[\\s\\t\\n\\r\\f]*")
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 if (vm.selected.value == null) {
                     vm.onAddNoteClicked()
                 } else {
-                    vm.onEditComplete()
+                    if (!regex.matches(vm.selected.value!!.title)) {
+                        vm.onEditComplete()
+                    }
                 }
             }) {
                 if (vm.selected.value == null) {
@@ -58,15 +63,15 @@ fun NotesScreen(vm: NotesViewModel) {
         }
     ) {
         if (vm.selected.value == null) {
-            Notes(it,notes,vm::onNoteSelected)
+            Notes(it, notes, vm::onNoteSelected)
         } else {
-            NoteEdit(vm.selected.value!!, vm::onNoteChange)
+            NoteEdit(vm.selected.value!!, vm::onNoteChange,regex)
         }
     }
 }
 
 @Composable
-fun Notes(padding:PaddingValues,notes:List<Note>,onNoteSelected:(Note)->Unit) {
+fun Notes(padding: PaddingValues, notes: List<Note>, onNoteSelected: (Note) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -108,14 +113,18 @@ fun Notes(padding:PaddingValues,notes:List<Note>,onNoteSelected:(Note)->Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteEdit(note: Note, onNoteChange: (String, String) -> Unit) {
+fun NoteEdit(note: Note, onNoteChange: (String, String) -> Unit,regex:Regex) {
     Column {
+
         var title by remember { mutableStateOf(note.title) }
+        var isError by remember { mutableStateOf(regex.matches(note.title)) }
+
         TextField(
             value = title,
             onValueChange = {
                 title = it
                 onNoteChange(it, note.text)
+                isError = regex.matches(note.title)
             },
             textStyle = MaterialTheme.typography.titleMedium,
             modifier = Modifier
@@ -125,6 +134,16 @@ fun NoteEdit(note: Note, onNoteChange: (String, String) -> Unit) {
                 Text(
                     text = "Заголовок"
                 )
+            },
+            isError = isError,
+            supportingText = {
+                if (isError) {
+                    Text(
+                        text = "Заголовок не может быть пустым",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         )
 
