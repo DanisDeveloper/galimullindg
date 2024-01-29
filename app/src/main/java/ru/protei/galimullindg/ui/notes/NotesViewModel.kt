@@ -1,6 +1,5 @@
 package ru.protei.galimullindg.ui.notes
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,16 +17,7 @@ class NotesViewModel(val notesUseCase: NotesUseCase) : ViewModel() {
 
     init {
         viewModelScope.launch {
-//            notesUseCase.fillWithInitialNotes(
-//                mutableStateListOf(
-//                    Note(
-//                        title = "Андройд",
-//                        text = "операционная система, которая открыта для всех"
-//                    ),
-//                    Note(title = "Why I Love Kotlin", text = "Lambdas and inline functions"),
-//                    Note(title = "I Love Coding", text = "programming is a hobby")
-//                )
-//            )
+            notesUseCase.loadRemoteNotes()
 
             notesUseCase.notesFlow().collect {
                 notes.value = it

@@ -9,4 +9,5 @@ interface NotesRepository {
     suspend fun update(note: Note)
     suspend fun deleteById(id: Long)
     suspend fun deleteAll()
+    suspend fun byRemoteId(remoteId:Long): Note?
 }

@@ -1,4 +1,4 @@
-package ru.protei.galimullindg.data
+package ru.protei.galimullindg.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -27,4 +27,7 @@ interface NotesDao {
 
     @Query("DELETE FROM Note")
     fun deleteAll()
+
+    @Query("SELECT * FROM Note WHERE remoteId=:remoteId")
+    suspend fun byRemoteId(remoteId:Long): Note?
 }

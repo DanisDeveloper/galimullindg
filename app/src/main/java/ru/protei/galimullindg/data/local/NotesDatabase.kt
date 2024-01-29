@@ -1,4 +1,4 @@
-package ru.protei.galimullindg.data
+package ru.protei.galimullindg.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -10,5 +10,5 @@ import ru.protei.galimullindg.domain.Note
     exportSchema = false
 )
 abstract class NotesDatabase : RoomDatabase() {
-    abstract fun notesDao():NotesDao
+    abstract fun notesDao(): NotesDao
 }

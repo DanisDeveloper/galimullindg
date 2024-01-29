@@ -1,4 +1,4 @@
-package ru.protei.galimullindg.data
+package ru.protei.galimullindg.data.local
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -41,4 +41,11 @@ class NotesRepositoryDB(private val notesDao: NotesDao) : NotesRepository {
         }
     }
 
+    override suspend fun byRemoteId(remoteId: Long): Note? {
+        var note: Note?
+        withContext(Dispatchers.IO) {
+            note = notesDao.byRemoteId(remoteId)
+        }
+        return note
+    }
 }
