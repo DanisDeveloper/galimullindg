@@ -1,9 +1,10 @@
 package ru.protei.galimullindg.domain
 
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 
-class NotesUseCase(
+class NotesUseCase @Inject constructor(
     private val notesRepo: NotesRepository,
     private val notesApi: NotesRemoteRepository
 ) {

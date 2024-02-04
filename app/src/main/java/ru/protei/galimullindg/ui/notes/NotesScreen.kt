@@ -1,6 +1,5 @@
 package ru.protei.galimullindg.ui.notes
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -39,7 +38,7 @@ import ru.protei.galimullindg.domain.Note
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesScreen(vm: NotesViewModel) {
+fun NotesScreen (vm: NotesViewModel) {
     val notes by vm.notes.collectAsState()
     val regex = Regex("[\\s\\t\\n\\r\\f]*")
 
